@@ -93,7 +93,7 @@ export default function ProfilePage() {
         setFile(null); 
 
       } catch (error) {
-        console.error(error.message);
+        console.error(error);
         toast.error("Failed to update profile image.");
       }
     }
