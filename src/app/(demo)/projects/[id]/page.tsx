@@ -110,6 +110,19 @@ export default function Page({ params }: { params: { id: string } }) {
     return <div>No post found.</div>;
   }
 
+  interface Link {
+    link: string;
+    type?: string;
+    text?: string;
+  }
+  
+  interface Post {
+    links: Link[];
+    // Add other properties of 'post' as needed
+  }
+  
+ 
+  
   return (
     <ContentLayout title={`${post.title}`}>
       {/* Breadcrumbs */}
@@ -241,7 +254,7 @@ export default function Page({ params }: { params: { id: string } }) {
             </label>
 
             {post.links && post.links.length > 0 ? (
-              post.links.map((link, index) => (
+              post.links.map((link: Link, index: number) => (
                 <div key={index} className="flex items-center mt-2">
                   <Input
                     type="text"
