@@ -3,7 +3,7 @@
 import { connectToDatabase } from "@/lib/mongo";
 import { NextResponse } from "next/server";
 
-export async function POST(request) {
+export async function POST(request:any) {
   const { title, date, summary, description, id, roles, links } = await request.json();
 
   try {

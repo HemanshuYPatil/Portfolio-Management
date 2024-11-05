@@ -2,20 +2,33 @@
 
 import Link from "next/link";
 import { Eye } from "lucide-react";
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useEffect, useState } from "react";
 
+// Define the structure of a work item
+interface WorkItem {
+  _id: string;
+  title: string;
+  date: string; // Adjust the type as necessary (e.g., Date if it's a date object)
+}
+
 // Fetch data from API
-async function fetchWorkData() {
+async function fetchWorkData(): Promise<WorkItem[]> {
   const res = await fetch("/api/work");
   const data = await res.json();
   return data;
 }
 
 export default function WorkCards() {
-  const [workItems, setWorkItems] = useState([]);
+  const [workItems, setWorkItems] = useState<WorkItem[]>([]); // Specify the type here
 
   useEffect(() => {
     async function loadWorkData() {
@@ -26,7 +39,7 @@ export default function WorkCards() {
   }, []);
 
   return (
-    <div className=" overflow-y-auto p-4">
+    <div className="overflow-y-auto p-4">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {workItems.map((item, index) => (
           <Card key={index} className={cn("w-full")}>
@@ -35,7 +48,7 @@ export default function WorkCards() {
             </CardHeader>
             <CardContent className="grid gap-4">
               <div className="space-y-1">
-                <p className="text-sm font-medium leading-none"> {item.date}</p>
+                <p className="text-sm font-medium leading-none">{item.date}</p>
               </div>
             </CardContent>
             <CardFooter>
