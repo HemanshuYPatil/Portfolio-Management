@@ -57,7 +57,7 @@ export default function Page({ params }: { params: { id: string } }) {
         date: post.date,
         roles: [...new Set(post.roles)], // Ensure unique roles
         links: Array.isArray(post.links)
-          ? post.links.map((link) => ({
+          ? post.links.map((link: { type: any; text: any; link: any; }) => ({
               type: link.type || "web", // Ensure default 'type' if not provided
               text: link.text || "Visit Site", // Ensure default 'text' if not provided
               link: link.link || "" // Ensure 'link' field exists
@@ -87,7 +87,7 @@ export default function Page({ params }: { params: { id: string } }) {
 
   const handleAddRole = () => {
     if (newRole.trim() !== "") {
-      setPost((prevPost) => ({
+      setPost((prevPost: { roles: any; }) => ({
         ...prevPost,
         roles: Array.from(new Set([...prevPost.roles, newRole.trim()])) // Prevent duplicates
       }));
@@ -96,7 +96,7 @@ export default function Page({ params }: { params: { id: string } }) {
   };
 
   const handleRemoveRole = (roleToRemove: string) => {
-    setPost((prevPost) => ({
+    setPost((prevPost: { roles: any[]; }) => ({
       ...prevPost,
       roles: prevPost.roles.filter((role: string) => role !== roleToRemove) // Remove the specified role
     }));
