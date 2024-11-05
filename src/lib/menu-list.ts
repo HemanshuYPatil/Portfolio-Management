@@ -41,47 +41,33 @@ export function getMenuList(pathname: string): Group[] {
       ]
     },
     {
-      groupLabel: "Contents",
+      groupLabel: "Manage",
       menus: [
         {
           href: "",
-          label: "Posts",
+          label: "Project",
           icon: SquarePen,
           submenus: [
             {
-              href: "/posts",
-              label: "All Posts"
+              href: "/projects",
+              label: "All Projects"
             },
             {
-              href: "/posts/new",
-              label: "New Post"
+              href: "/projects/new",
+              label: "New Project"
             }
           ]
         },
-        {
-          href: "/categories",
-          label: "Categories",
-          icon: Bookmark
-        },
-        {
-          href: "/tags",
-          label: "Tags",
-          icon: Tag
-        }
+       
       ]
     },
     {
       groupLabel: "Settings",
       menus: [
         {
-          href: "/users",
-          label: "Users",
+          href: "/profile",
+          label: "Profile",
           icon: Users
-        },
-        {
-          href: "/account",
-          label: "Account",
-          icon: Settings
         }
       ]
     }

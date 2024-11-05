@@ -1,34 +1,51 @@
+"use client";
+
 import Link from "next/link";
-import Image from "next/image";
+import { Eye } from "lucide-react";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import { useEffect, useState } from "react";
 
-import { Card, CardContent } from "@/components/ui/card";
+// Fetch data from API
+async function fetchWorkData() {
+  const res = await fetch("/api/work");
+  const data = await res.json();
+  return data;
+}
 
-export default function PlaceholderContent() {
+export default function WorkCards() {
+  const [workItems, setWorkItems] = useState([]);
+
+  useEffect(() => {
+    async function loadWorkData() {
+      const data = await fetchWorkData();
+      setWorkItems(data);
+    }
+    loadWorkData();
+  }, []);
+
   return (
-    <Card className="rounded-lg border-none mt-6">
-      <CardContent className="p-6">
-        <div className="flex justify-center items-center min-h-[calc(100vh-56px-64px-20px-24px-56px-48px)]">
-          <div className="flex flex-col relative">
-            <Image
-              src="/placeholder.png"
-              alt="Placeholder Image"
-              width={500}
-              height={500}
-              priority
-            />
-            <div className="absolute -bottom-8 right-0">
-              <Link
-                href="https://www.freepik.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-xs text-muted-foreground"
-              >
-                Designed by Freepik
-              </Link>
-            </div>
-          </div>
-        </div>
-      </CardContent>
-    </Card>
+    <div className=" overflow-y-auto p-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {workItems.map((item, index) => (
+          <Card key={index} className={cn("w-full")}>
+            <CardHeader>
+              <CardTitle>{item.title}</CardTitle>
+            </CardHeader>
+            <CardContent className="grid gap-4">
+              <div className="space-y-1">
+                <p className="text-sm font-medium leading-none"> {item.date}</p>
+              </div>
+            </CardContent>
+            <CardFooter>
+              <Button className="w-full gap-2">
+                <Eye /> <Link href={`/projects/${item._id}`}>View Projects</Link>
+              </Button>
+            </CardFooter>
+          </Card>
+        ))}
+      </div>
+    </div>
   );
 }

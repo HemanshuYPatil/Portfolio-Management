@@ -16,7 +16,7 @@ export default function HomePage() {
             className="flex justify-start items-center hover:opacity-85 transition-opacity duration-300"
           >
             <PanelsTopLeft className="w-6 h-6 mr-3" />
-            <span className="font-bold">shadcn/ui sidebar</span>
+            <span className="font-bold">Portfolio Management</span>
             <span className="sr-only">shadcn/ui sidebar</span>
           </Link>
           <nav className="ml-auto flex items-center gap-2">
@@ -38,26 +38,26 @@ export default function HomePage() {
         <div className="container relative pb-10">
           <section className="mx-auto flex max-w-[980px] flex-col items-center gap-2 py-8 md:py-12 md:pb-8 lg:py-24 lg:pb-6">
             <h1 className="text-center text-3xl font-bold leading-tight tracking-tighter md:text-5xl lg:leading-[1.1]">
-              Sidebar example built on top of shadcn/ui
+            Manage our Portfolio with Ease
             </h1>
             <span className="max-w-[750px] text-center text-lg font-light text-foreground">
-              A stunning and functional retractable sidebar for Next.js using
-              shadcn/ui complete with desktop and mobile responsiveness.
+            A powerful and intuitive sidebar for seamless navigation in managing our portfolio, built using ShadCN UI. Fully responsive for both desktop and mobile experiences.
+
             </span>
             <div className="flex w-full items-center justify-center space-x-4 py-4 md:pb-6">
               <Button variant="default" asChild>
                 <Link href="/dashboard">
-                  Demo
+                  Get Started
                   <ArrowRightIcon className="ml-2" />
                 </Link>
               </Button>
               <Button variant="outline" asChild>
                 <Link
-                  href="https://ui.shadcn.com/"
+                  href="https://hemanshu-portfolio.vercel.app/"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  Learn shadcn/ui
+                  View Portfolio
                 </Link>
               </Button>
             </div>
@@ -99,24 +99,10 @@ export default function HomePage() {
       <footer className="py-6 md:py-0 border-t border-border/40">
         <div className="container flex flex-col items-center justify-center gap-4 md:h-24 md:flex-row">
           <p className="text-balance text-center text-sm leading-loose text-muted-foreground">
-            Built on top of{" "}
-            <Link
-              href="https://ui.shadcn.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="font-medium underline underline-offset-4"
-            >
-              shadcn/ui
-            </Link>
-            . The source code is available on{" "}
-            <Link
-              href="https://github.com/salimi-my/shadcn-ui-sidebar"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="font-medium underline underline-offset-4"
-            >
-              GitHub
-            </Link>
+            Built by{" "}
+            
+            Hemanshu Patil
+            
             .
           </p>
         </div>
