@@ -195,8 +195,8 @@ export default function Page({ params }: { params: { id: string } }) {
                 </SelectValue>
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="option1">Web Application</SelectItem>
-                <SelectItem value="option2">Android Application</SelectItem>
+                <SelectItem value="Web Application">Web Application</SelectItem>
+                <SelectItem value="Android Application">Android Application</SelectItem>
               </SelectContent>
             </Select>
           </div>
