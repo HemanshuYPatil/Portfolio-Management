@@ -50,7 +50,7 @@ export default function NewPostPage() {
     const updatedPost = {
       id, 
       title,
-      // details: {
+      // details: {    
         description,
         summary,
       // },

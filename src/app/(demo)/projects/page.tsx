@@ -21,12 +21,12 @@ export default function PostsPage() {
               <Link href="/">Home</Link>
             </BreadcrumbLink>
           </BreadcrumbItem>
-          <BreadcrumbSeparator />
+          {/* <BreadcrumbSeparator />
           <BreadcrumbItem>
             <BreadcrumbLink asChild>
               <Link href="/dashboard">Dashboard</Link>
             </BreadcrumbLink>
-          </BreadcrumbItem>
+          </BreadcrumbItem> */}
           <BreadcrumbSeparator />
           <BreadcrumbItem>
             <BreadcrumbPage>Projects</BreadcrumbPage>

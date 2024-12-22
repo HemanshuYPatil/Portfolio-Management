@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useCallback, useEffect, useState } from "react"; 
+import React, { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { ContentLayout } from "@/components/admin-panel/content-layout";
 import {
@@ -12,26 +12,39 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { useEdgeStore } from "../../../lib/edgestore";
-import toast from "react-hot-toast";
-import { useRouter } from 'next/navigation'
+import { toast } from "react-hot-toast";
+import { useRouter } from 'next/navigation';
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { CSpinner } from "@coreui/react";
+import { Upload, ImageIcon, X } from 'lucide-react';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 export default function ProfilePage() {
-  const [file, setFile] = useState<File | null>(null); 
-  const [uploadProgress, setUploadProgress] = useState<number>(0); 
-  const [uploadComplete, setUploadComplete] = useState<boolean>(false); 
-  const [imageData, setImageData] = useState<{ _id: string; image: string } | null>(null); // State to hold fetched image data
+  const [file, setFile] = useState<File | null>(null);
+  const [uploadProgress, setUploadProgress] = useState<number>(0);
+  const [uploadComplete, setUploadComplete] = useState<boolean>(false);
+  const [imageData, setImageData] = useState<{ _id: string; image: string } | null>(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const { edgestore } = useEdgeStore();
   const router = useRouter();
+
   useEffect(() => {
-    // Fetch the image data on component mount
     const fetchImageData = async () => {
       try {
-        const response = await fetch("/api/img"); // Adjust this URL to your actual endpoint
+        const response = await fetch("/api/img");
         if (!response.ok) {
           throw new Error("Failed to fetch image data.");
         }
         const data = await response.json();
-        setImageData(data[0]); // Assuming data returns an array and we want the first item
+        setImageData(data[0]);
       } catch (error) {
         console.error(error);
         toast.error("Failed to load image data.");
@@ -72,7 +85,7 @@ export default function ProfilePage() {
         const response = await edgestore.publicFiles.upload({
           file,
           onProgressChange: (progress: number) => {
-            setUploadProgress(progress); 
+            setUploadProgress(progress);
           },
         });
 
@@ -81,7 +94,7 @@ export default function ProfilePage() {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ imageUrl: response.url }), 
+          body: JSON.stringify({ imageUrl: response.url }),
         });
 
         if (!updateResponse.ok) {
@@ -90,7 +103,7 @@ export default function ProfilePage() {
 
         setUploadComplete(true);
         setUploadProgress(0);
-        setFile(null); 
+        setFile(null);
 
       } catch (error) {
         console.error(error);
@@ -102,7 +115,7 @@ export default function ProfilePage() {
   useEffect(() => {
     if (uploadComplete) {
       toast.success("Upload successful!");
-      window.location.reload(); 
+      window.location.reload();
     }
   }, [uploadComplete]);
 
@@ -122,60 +135,85 @@ export default function ProfilePage() {
         </BreadcrumbList>
       </Breadcrumb>
 
-      <div className="mt-6 p-4 rounded-lg shadow-md">
-        <h2 className="text-2xl font-semibold mb-4">Upload Your Profile Picture</h2>
-        <p className="text-gray-600 mb-4">
-          Please drag and drop an image file here, or click to select one.
-        </p>
+      <Card className="mt-6">
+        <CardHeader>
+          <CardTitle>Upload Your Profile Picture</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid gap-6 md:grid-cols-2">
+            {imageData && (
+              <div className="flex flex-col items-center justify-center p-4 border rounded-lg">
+                <h3 className="text-lg font-semibold mb-2">Current Picture</h3>
+                <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                  <DialogTrigger asChild>
+                    <div className="relative w-40 h-40 rounded-full overflow-hidden border-4 border-primary cursor-pointer hover:opacity-80 transition-opacity">
+                      <img src={imageData.image} alt="Profile" className="object-inherit w-full h-full" />
+                    </div>
+                  </DialogTrigger>
+                  <DialogContent className="sm:max-w-[425px]">
+                    <DialogHeader>
+                      <DialogTitle>Profile Picture</DialogTitle>
+                      <DialogDescription>Your current profile picture</DialogDescription>
+                    </DialogHeader>
+                    <div className="mt-4 relative aspect-square w-full max-h-[80vh] overflow-hidden rounded-md">
+                      <img src={imageData.image} alt="Profile" className="object-inherit w-full h-full" />
+                    </div>
+                    <Button className="mt-4" onClick={() => setIsDialogOpen(false)}>Close</Button>
+                  </DialogContent>
+                </Dialog>
+              </div>
+            )}
 
-        {/* Preview Component */}
-        {imageData && (
-          <div className="mb-4">
-            <h3 className="text-lg font-semibold">Current Profile Picture:</h3>
-            <img src={imageData.image} alt="Profile" className="rounded-lg border-2 border-gray-300" />
-          </div>
-        )}
-
-        <div
-          className={`border-2 border-dashed rounded-lg p-4 flex items-center justify-center cursor-pointer ${
-            file ? "border-green-500" : "border-gray-300"
-          }`}
-          onDrop={handleDrop}
-          onDragOver={handleDragOver}
-          onClick={() => document.getElementById("file-input")?.click()}
-        >
-          {file ? (
-            <p className="text-gray-700">File: {file.name}</p>
-          ) : (
-            <p className="text-gray-400">Drag and drop your file here, or click to upload.</p>
-          )}
-          <input
-            id="file-input"
-            type="file"
-            onChange={handleFileChange}
-            className="hidden"
-          />
-        </div>
-
-        <button
-          onClick={handleUpload}
-          className="mt-4 w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition duration-300"
-        >
-          Upload
-        </button>
-
-        {uploadProgress > 0 && uploadProgress < 100 && (
-          <div className="mt-4">
-            <div className="bg-gray-200 rounded-full h-2.5">
+            <div className="flex flex-col items-center justify-center">
               <div
-                className="bg-blue-600 h-2.5 rounded-full"
-                style={{ width: `${uploadProgress}%` }}
+                className={`w-full h-40 border-2 border-dashed rounded-lg p-4 flex flex-col items-center justify-center cursor-pointer transition-colors ${
+                  file ? "border-primary bg-primary/10" : "border-gray-300 hover:border-primary hover:bg-primary/5"
+                }`}
+                onDrop={handleDrop}
+                onDragOver={handleDragOver}
+                onClick={() => document.getElementById("file-input")?.click()}
+              >
+                {file ? (
+                  <>
+                    <ImageIcon className="w-12 h-12 text-primary mb-2" />
+                    <p className="text-sm text-gray-600">{file.name}</p>
+                  </>
+                ) : (
+                  <>
+                    <Upload className="w-12 h-12 text-gray-400 mb-2" />
+                    <p className="text-sm text-gray-500 text-center">
+                      Drag and drop your file here, or click to upload
+                    </p>
+                  </>
+                )}
+              </div>
+              <input
+                id="file-input"
+                type="file"
+                onChange={handleFileChange}
+                className="hidden"
+                accept="image/*"
               />
+
+              <Button
+                onClick={handleUpload}
+                className="mt-4 w-full"
+                disabled={!file || uploadProgress > 0}
+              >
+                {uploadProgress > 0 ? 'Uploading...' : 'Upload'}
+              </Button>
+
+              {uploadProgress > 0 && (
+                <div className="w-full mt-4">
+                  <CSpinner className="w-full" />
+                  <p className="text-sm text-gray-600 mt-1 text-center">{uploadProgress}%</p>
+                </div>
+              )}
             </div>
-            <p className="text-sm text-gray-600 mt-1 text-center">{uploadProgress}%</p>
           </div>
-        )}
-      </div>
+        </CardContent>
+      </Card>
     </ContentLayout>
   );
 }
+

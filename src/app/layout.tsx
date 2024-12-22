@@ -12,6 +12,7 @@ import "./globals.css";
 
 import { ThemeProvider } from "@/components/providers/theme-provider";
 import { EdgeStoreProvider } from "@/lib/edgestore";
+import { dark } from "@clerk/themes";
 
 export const metadata: Metadata = {
   metadataBase: new URL(
@@ -50,13 +51,17 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={GeistSans.className}>
-        <ClerkProvider>
+        <ClerkProvider
+          appearance={{
+            baseTheme: dark
+          }}
+        >
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
             <EdgeStoreProvider>{children}</EdgeStoreProvider>
             <Toaster />
           </ThemeProvider>
         </ClerkProvider>
       </body>
-    </html> 
+    </html>
   );
 }

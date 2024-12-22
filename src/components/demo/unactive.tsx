@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Eye, Trash2 } from "lucide-react";
+import { Eye, Trash2, ExternalLink } from 'lucide-react';
 import {
   Card,
   CardContent,
@@ -20,31 +20,29 @@ import {
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { CSpinner } from '@coreui/react';
+
 interface WorkItem {
   _id: string;
   title: string;
   date: string;
+  description: string;
+  link: string;
 }
 
 async function fetchWorkData(): Promise<WorkItem[]> {
-  const res = await fetch("/api/work");
+  const res = await fetch("/api/unactive-projects/fetch");
   const data = await res.json();
   return data;
 }
 
 async function deleteWorkItem(id: string) {
-  const response = await fetch("/api/delete", {
+  const response = await fetch("/api/unactive-projects/delete", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ id })
   });
 
-
-
-  if (response.ok) {
-    
-  } else {
-    
+  if (!response.ok) {
     toast.error("Failed to delete project.");
   }
 
@@ -53,8 +51,9 @@ async function deleteWorkItem(id: string) {
 
 export default function WorkCards() {
   const [workItems, setWorkItems] = useState<WorkItem[]>([]);
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const [selectedWorkId, setSelectedWorkId] = useState<string | null>(null);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [viewDialogOpen, setViewDialogOpen] = useState(false);
+  const [selectedWorkItem, setSelectedWorkItem] = useState<WorkItem | null>(null);
   const [deletebtn, setdeletebtn] = useState(false);
 
   useEffect(() => {
@@ -66,16 +65,16 @@ export default function WorkCards() {
   }, []);
 
   const handleDelete = async () => {
-    if (selectedWorkId) {
+    if (selectedWorkItem) {
       setdeletebtn(true);
       try {
-        await deleteWorkItem(selectedWorkId);
+        await deleteWorkItem(selectedWorkItem._id);
         setWorkItems((prev) =>
-          prev.filter((item) => item._id !== selectedWorkId)
+          prev.filter((item) => item._id !== selectedWorkItem._id)
         );
         setdeletebtn(false);
-        setDialogOpen(false);
-        setSelectedWorkId(null);
+        setDeleteDialogOpen(false);
+        setSelectedWorkItem(null);
         toast.success("Project Deleted successfully!");
       } catch (error) {
         console.error("Failed to delete the project:", error);
@@ -98,16 +97,22 @@ export default function WorkCards() {
             </CardContent>
             <CardFooter>
               <div className="flex flex-col md:flex-row gap-2 w-full">
-                <Button className="flex-1 gap-2">
+                <Button 
+                  className="flex-1 gap-2"
+                  onClick={() => {
+                    setSelectedWorkItem(item);
+                    setViewDialogOpen(true);
+                  }}
+                >
                   <Eye />
-                  <Link href={`/projects/${item._id}`}>View Projects</Link>
+                  View Details
                 </Button>
                 <Button
                   variant="destructive"
                   className="flex-1 md:flex-none w-auto text-sm px-2 py-1 flex items-center gap-1"
                   onClick={() => {
-                    setSelectedWorkId(item._id);
-                    setDialogOpen(true);
+                    setSelectedWorkItem(item);
+                    setDeleteDialogOpen(true);
                   }}
                 >
                   <Trash2 />
@@ -119,14 +124,14 @@ export default function WorkCards() {
       </div>
 
       {/* Dialog for Deletion Confirmation */}
-      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+      <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Confirm Deletion</DialogTitle>
           </DialogHeader>
           <p>Are you sure you want to delete this project?</p>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setDialogOpen(false)}>
+            <Button variant="outline" onClick={() => setDeleteDialogOpen(false)}>
               Cancel
             </Button>
 
@@ -142,6 +147,32 @@ export default function WorkCards() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Dialog for Viewing Project Details */}
+      <Dialog open={viewDialogOpen} onOpenChange={setViewDialogOpen}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>{selectedWorkItem?.title}</DialogTitle>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <p><strong>Date:</strong> {selectedWorkItem?.date}</p>
+            <p><strong>Description:</strong> {selectedWorkItem?.description}</p>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setViewDialogOpen(false)}>
+              Cancel
+            </Button>
+            <Button 
+              onClick={() => window.open(selectedWorkItem?.link, '_blank')}
+              className="gap-2"
+            >
+              Visit Site
+              <ExternalLink className="h-4 w-4" />
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
+
